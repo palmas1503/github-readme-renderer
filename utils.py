@@ -37,7 +37,7 @@ def extract_github_url(url: str) -> Dict[str, str]:
         Dictionary with 'owner' and 'repo' keys
     """
     # Match pattern: https://github.com/owner/repo or github.com/owner/repo
-    pattern = r'(?:https?://)?(?:www\.)?github\.com/([^/]+)/([^/]+)'
+    pattern = r'(?:https?://)?(?:www\\.)?github\\.com/([^/]+)/([^/]+)'
     match = re.match(pattern, url)
     
     if match:
@@ -70,23 +70,6 @@ def sanitize_query(query: str, max_length: int = 1000) -> str:
     return query.strip()
 
 
-def validate_temperature(temp: float) -> bool:
-    """
-    Validate temperature parameter
-    
-    Args:
-        temp: Temperature value (0-1)
-        
-    Returns:
-        True if valid, False otherwise
-    """
-    try:
-        temp_float = float(temp)
-        return 0.0 <= temp_float <= 1.0
-    except (ValueError, TypeError):
-        return False
-
-
 def clamp_temperature(temp: float) -> float:
     """
     Clamp temperature to valid range (0-1)
@@ -102,68 +85,6 @@ def clamp_temperature(temp: float) -> float:
         return max(0.0, min(1.0, temp_float))
     except (ValueError, TypeError):
         return 0.7
-
-
-def format_response(
-    status: str,
-    message: str,
-    data: Optional[Dict[str, Any]] = None,
-    error: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Format standardized API response
-    
-    Args:
-        status: Response status (success/error)
-        message: Response message
-        data: Optional response data
-        error: Optional error message
-        
-    Returns:
-        Formatted response dictionary
-    """
-    response = {
-        'status': status,
-        'message': message,
-        'timestamp': datetime.utcnow().isoformat()
-    }
-    
-    if data:
-        response['data'] = data
-    
-    if error:
-        response['error'] = error
-    
-    return response
-
-
-def log_request(method: str, endpoint: str, data: Optional[Dict] = None):
-    """
-    Log API request
-    
-    Args:
-        method: HTTP method
-        endpoint: API endpoint
-        data: Optional request data
-    """
-    logger.info(f"{method} {endpoint}")
-    if data:
-        # Don't log sensitive data
-        safe_data = {k: v for k, v in data.items() if k not in ['api_key', 'token']}
-        logger.debug(f"Request data: {safe_data}")
-
-
-def log_response(status_code: int, endpoint: str, duration_ms: float = None):
-    """
-    Log API response
-    
-    Args:
-        status_code: HTTP status code
-        endpoint: API endpoint
-        duration_ms: Response duration in milliseconds
-    """
-    duration_str = f" ({duration_ms:.2f}ms)" if duration_ms else ""
-    logger.info(f"{endpoint} -> {status_code}{duration_str}")
 
 
 def truncate_text(text: str, max_length: int = 500, suffix: str = "...") -> str:
@@ -182,3 +103,47 @@ def truncate_text(text: str, max_length: int = 500, suffix: str = "...") -> str:
         return text
     
     return text[:max_length - len(suffix)] + suffix
+
+
+def validate_github_url(url: str) -> bool:
+    """
+    Validate GitHub URL format
+    
+    Args:
+        url: URL to validate
+        
+    Returns:
+        True if valid GitHub URL, False otherwise
+    """
+    if not url or not isinstance(url, str):
+        return False
+    
+    return 'github.com' in url and (url.startswith('http://') or url.startswith('https://'))
+
+
+def log_request(method: str, endpoint: str, data: Optional[Dict] = None):
+    """
+    Log API request
+    
+    Args:
+        method: HTTP method
+        endpoint: API endpoint
+        data: Optional request data
+    """
+    logger.info(f"{method} {endpoint}")
+    if data:
+        safe_data = {k: v for k, v in data.items() if k not in ['api_key', 'token']}
+        logger.debug(f"Request data: {safe_data}")
+
+
+def log_response(status_code: int, endpoint: str, duration_ms: float = None):
+    """
+    Log API response
+    
+    Args:
+        status_code: HTTP status code
+        endpoint: API endpoint
+        duration_ms: Response duration in milliseconds
+    """
+    duration_str = f" ({duration_ms:.2f}ms)" if duration_ms else ""
+    logger.info(f"{endpoint} -> {status_code}{duration_str}")

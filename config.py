@@ -32,6 +32,7 @@ class Config:
     # API Endpoints
     OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions"
     DEEPSEEK_ENDPOINT = "https://api.deepseek.com/chat/completions"
+    GITHUB_API_ENDPOINT = "https://api.github.com"
     
     # Timeouts
     API_TIMEOUT = 30.0

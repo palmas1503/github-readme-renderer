@@ -19,14 +19,9 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Framework :: Flask",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     python_requires=">=3.8",
     install_requires=[
@@ -38,9 +33,4 @@ setup(
         "Pygments>=2.16.0",
         "requests>=2.31.0",
     ],
-    entry_points={
-        "console_scripts": [
-            "github-readme-renderer=app:app",
-        ],
-    },
 )

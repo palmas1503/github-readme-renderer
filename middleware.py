@@ -36,12 +36,11 @@ def handle_app_error(error):
             'timestamp': datetime.utcnow().isoformat()
         }
         
-        if error.retry_after:
+        if hasattr(error, 'retry_after') and error.retry_after:
             response['retry_after'] = error.retry_after
         
         return jsonify(response), error.status_code
     
-    # Re-raise if not an AppError
     raise error
 
 
@@ -88,33 +87,4 @@ def require_json(f):
                 'timestamp': datetime.utcnow().isoformat()
             }), 415
         return f(*args, **kwargs)
-    return decorated_function
-
-
-def rate_limit(max_requests: int = 100, window_seconds: int = 60):
-    """
-    Rate limiting decorator
-    
-    Args:
-        max_requests: Maximum requests allowed
-        window_seconds: Time window in seconds
-    """
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            # TODO: Implement proper rate limiting with Redis
-            # For now, just pass through
-            return f(*args, **kwargs)
-        return decorated_function
-    return decorator
-
-
-def json_response(f):
-    """Decorator to ensure JSON response"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        result = f(*args, **kwargs)
-        if isinstance(result, tuple):
-            return result
-        return jsonify(result), 200
     return decorated_function
